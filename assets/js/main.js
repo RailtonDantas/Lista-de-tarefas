@@ -8,27 +8,38 @@ if(localStorage.getItem("allTasksInLocalStorage")){
     }
 }
 
+document.body.addEventListener("keypress", (e) => {
+    if(e.key == 'Enter'){
+        buttonAddTask.click()
+    }
+})
 buttonAddTask.addEventListener("click", () => {
 
     const inputTask = document.querySelector("#input-add-task")
     const currentTask = inputTask.value 
     if(!currentTask.match(/[a-z]|[A-z]/)) return;
     
-    const liOfTask = createElementsOfCurrentTask('li')
-    const paragraphOfTask = createElementsOfCurrentTask('p')
-    const deleteButton = createElementsOfCurrentTask('button')
+   let elements = createElementsOfCurrentTask()
+   elements.push(currentTask)
 
     insertTasksInLocalStorage(currentTask)
-    const readyElement = joinElementsOfCurrentTask(liOfTask,paragraphOfTask,deleteButton,currentTask)
+    const readyElement = joinElementsOfCurrentTask(...elements)
 
     allTasks.appendChild(readyElement)
-    inputTask.value = ""
+    clearInput(inputTask)
     
 })
 
+function clearInput(input){
+    input.value = ""
+    input.focus()
+}
 
-function createElementsOfCurrentTask(element){
-    return document.createElement(element)
+function createElementsOfCurrentTask(){
+    const liOfTask = document.createElement('li')
+    const paragraphOfTask = document.createElement('p')
+    const deleteButton = document.createElement('button')
+    return [liOfTask,paragraphOfTask,deleteButton]
 }
 function joinElementsOfCurrentTask(li,p,button,task){
     p.textContent = task
@@ -62,16 +73,14 @@ document.body.addEventListener("click", (e) => {
         allTasks.removeChild(deleteBtn.parentNode)
     }
 })
-
 function recoveringTasksOfLocalStorage(){
     let arrayOfTasks = localStorage.getItem("allTasksInLocalStorage").split(",")
     for(let c = 0; c < arrayOfTasks.length; c++){
         let currentTask = arrayOfTasks[c]
-        let currentLi = createElementsOfCurrentTask('li')
-        let currentP = createElementsOfCurrentTask("p")
-        let currentButtonDelete = createElementsOfCurrentTask("button")
+        let elements = createElementsOfCurrentTask()
+        elements.push(currentTask)
 
-        let recoveringCurrentTask = joinElementsOfCurrentTask(currentLi,currentP,currentButtonDelete,currentTask)
+        let recoveringCurrentTask = joinElementsOfCurrentTask(...elements)
         allTasks.appendChild(recoveringCurrentTask)
 }
 }
